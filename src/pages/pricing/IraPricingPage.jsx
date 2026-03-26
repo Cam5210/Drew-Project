@@ -40,7 +40,13 @@ function IraPricingPage() {
           Ready to start your IRA journey?
         </p>
 
-        <div className="mt-4">
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <button
+            onClick={() => navigate('/recommendation/ira')}
+            className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark transition hover:border-brand-gold"
+          >
+            ← Back
+          </button>
           <Button className="px-10 py-3" onClick={() => navigate('/providers/ira')}>
             Let&apos;s Go
           </Button>

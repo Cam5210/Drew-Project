@@ -29,8 +29,15 @@ function DocusignPage() {
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-dark">
-      <div className="border-b border-white/10 px-6 py-4">
+      <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/70 transition hover:border-brand-gold hover:text-brand-gold"
+        >
+          ← Back
+        </button>
         <Logo className="flex justify-center" imageClassName="max-w-[160px]" />
+        <div className="w-16" />
       </div>
 
       <div className="mx-auto grid max-w-6xl gap-0 md:grid-cols-[200px_1fr_200px]">

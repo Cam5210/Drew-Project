@@ -1,145 +1,121 @@
-import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Logo from '../../components/common/Logo'
-import { calculateTaxCredit } from '../../utils/taxCredit'
+
+const scenarios = [
+  { employees: 10, hces: 1, eligible: 8, autoEnroll: true },
+  { employees: 25, hces: 2, eligible: 20, autoEnroll: true },
+  { employees: 50, hces: 5, eligible: 40, autoEnroll: false },
+  { employees: 100, hces: 10, eligible: 75, autoEnroll: true },
+]
+
+function computeCredits(s) {
+  const nonHce = s.employees - s.hces
+  const startup = Math.min(5000, Math.max(500, nonHce * 250))
+  const autoEnrollBonus = s.autoEnroll ? Math.min(500, nonHce * 50) : 0
+  const contribution = Math.min(s.eligible, nonHce) * 1000
+  const year1to3 = startup + autoEnrollBonus + contribution
+  const year4to5 = contribution
+  return { startup, autoEnrollBonus, contribution, year1to3, year4to5, total5yr: year1to3 * 3 + year4to5 * 2 }
+}
+
+const fmt = (v) => `$${Number(v).toLocaleString()}`
 
 function TaxCreditCalculatorPage() {
-  const [totalEmployees, setTotalEmployees] = useState('')
-  const [hceCount, setHceCount] = useState('')
-  const [eligibleCount, setEligibleCount] = useState('')
-  const [autoEnroll, setAutoEnroll] = useState(null)
-
-  const canCalculate =
-    totalEmployees !== '' && hceCount !== '' && eligibleCount !== '' && autoEnroll !== null
-
-  const result = useMemo(() => {
-    if (!canCalculate) return null
-    return calculateTaxCredit({
-      totalEmployees: Number(totalEmployees),
-      hceCount: Number(hceCount),
-      eligibleCount: Number(eligibleCount),
-      autoEnroll,
-    })
-  }, [totalEmployees, hceCount, eligibleCount, autoEnroll, canCalculate])
-
-  const fmt = (v) => `$${Number(v).toLocaleString()}`
-
-  const inputClass =
-    'w-full rounded-lg border border-brand-border bg-white px-4 py-3 text-sm text-brand-dark focus:border-brand-gold focus:outline-none transition'
-  const readonlyClass =
-    'w-full rounded-lg border border-brand-border bg-brand-light px-4 py-3 text-sm text-brand-dark'
+  const navigate = useNavigate()
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-dark px-6 py-16">
       <Logo className="mb-10 flex justify-center" imageClassName="max-w-[220px]" />
 
-      <div className="surface-card mx-auto max-w-2xl px-8 py-10 md:px-12">
-        <h2 className="m-0 text-xl font-bold text-brand-dark">Tax Credit Calculator</h2>
+      <div className="surface-card mx-auto max-w-3xl px-8 py-10 md:px-12">
+        <h2 className="m-0 text-xl font-bold text-brand-dark">Available Tax Credits</h2>
+        <p className="mt-2 text-sm leading-relaxed text-brand-muted">
+          Small businesses may be eligible for significant federal tax credits when starting a new
+          401(k) plan. Below are estimated credits based on common company profiles.
+        </p>
 
-        <div className="mt-6 space-y-5">
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-brand-dark">
-              Total Number of Employees *
-            </label>
-            <input
-              className={inputClass}
-              type="number"
-              min="0"
-              value={totalEmployees}
-              onChange={(e) => setTotalEmployees(e.target.value)}
-            />
+        {/* Credit overview */}
+        <div className="mt-8 space-y-4">
+          <div className="rounded-xl border border-brand-border px-6 py-4">
+            <h3 className="m-0 text-sm font-bold text-brand-dark">Start-Up Tax Credit</h3>
+            <p className="mt-1 text-sm text-brand-muted">
+              Up to <strong>$5,000 per year</strong> for the first 3 years. Calculated as $250 per
+              non-HCE employee (minimum $500).
+            </p>
           </div>
-
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-brand-dark">
-              Number of Highly Compensated Employees (HCEs) *
-            </label>
-            <input
-              className={inputClass}
-              type="number"
-              min="0"
-              value={hceCount}
-              onChange={(e) => setHceCount(e.target.value)}
-            />
+          <div className="rounded-xl border border-brand-border px-6 py-4">
+            <h3 className="m-0 text-sm font-bold text-brand-dark">Auto-Enrollment Credit</h3>
+            <p className="mt-1 text-sm text-brand-muted">
+              Up to <strong>$500 per year</strong> for the first 3 years when automatic enrollment
+              is enabled.
+            </p>
           </div>
-
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-brand-dark">
-              Number of Employees Who Earned Under $69,000 During Tax Prior Year *
-            </label>
-            <input
-              className={inputClass}
-              type="number"
-              min="0"
-              value={eligibleCount}
-              onChange={(e) => setEligibleCount(e.target.value)}
-            />
+          <div className="rounded-xl border border-brand-border px-6 py-4">
+            <h3 className="m-0 text-sm font-bold text-brand-dark">
+              Employer Contribution Credit
+            </h3>
+            <p className="mt-1 text-sm text-brand-muted">
+              Up to <strong>$1,000 per eligible employee per year</strong> for the first 5 years.
+              Applies to employees earning under $69,000.
+            </p>
           </div>
+        </div>
 
-          <div>
-            <label className="mb-2 block text-xs font-semibold text-brand-dark">
-              Automatic Enrollment
-            </label>
-            <div className="flex gap-6">
-              <label className="flex cursor-pointer items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="autoEnroll"
-                  className="accent-brand-gold"
-                  checked={autoEnroll === true}
-                  onChange={() => setAutoEnroll(true)}
-                />
-                Yes
-              </label>
-              <label className="flex cursor-pointer items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="autoEnroll"
-                  className="accent-brand-gold"
-                  checked={autoEnroll === false}
-                  onChange={() => setAutoEnroll(false)}
-                />
-                No
-              </label>
-            </div>
+        {/* Example scenarios table */}
+        <div className="mt-10 rounded-xl border-2 border-brand-gold bg-brand-gold/5 p-6">
+          <h3 className="m-0 text-lg font-bold text-brand-dark">
+            Estimated Tax Credits by Company Size
+          </h3>
+          <p className="mt-1 text-xs text-brand-muted">
+            These are estimates only. Actual credits depend on your specific plan design and
+            employee demographics. *
+          </p>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-brand-border">
+                  <th className="pb-2 pr-4 text-xs font-semibold text-brand-muted">Employees</th>
+                  <th className="pb-2 pr-4 text-xs font-semibold text-brand-muted">
+                    Start-Up Credit
+                  </th>
+                  <th className="pb-2 pr-4 text-xs font-semibold text-brand-muted">
+                    Contribution Credit
+                  </th>
+                  <th className="pb-2 pr-4 text-xs font-semibold text-brand-muted">
+                    Per Year (Yr 1–3)
+                  </th>
+                  <th className="pb-2 text-xs font-semibold text-brand-muted">
+                    5-Year Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {scenarios.map((s) => {
+                  const c = computeCredits(s)
+                  return (
+                    <tr key={s.employees} className="border-b border-brand-border/50">
+                      <td className="py-3 pr-4 font-semibold text-brand-dark">{s.employees}</td>
+                      <td className="py-3 pr-4 text-brand-dark">{fmt(c.startup)}</td>
+                      <td className="py-3 pr-4 text-brand-dark">{fmt(c.contribution)}</td>
+                      <td className="py-3 pr-4 font-semibold text-brand-dark">{fmt(c.year1to3)}</td>
+                      <td className="py-3 font-bold text-brand-gold">{fmt(c.total5yr)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
+        </div>
 
-          {result && (
-            <>
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-brand-dark">
-                  Estimated Start-Up Tax Credit
-                </label>
-                <div className={readonlyClass}>{fmt(result.startupCredit)}</div>
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-brand-dark">
-                  Estimated Employer Contribution Tax Credit ($1,000 Max per Employee)
-                </label>
-                <div className={readonlyClass}>{fmt(result.contributionCredit)}</div>
-              </div>
-
-              <div className="mt-8 rounded-xl border-2 border-brand-gold bg-brand-gold/5 p-6">
-                <h3 className="m-0 text-lg font-bold text-brand-dark">
-                  Total Estimated Tax Credit Available By Year
-                </h3>
-                <p className="mt-1 text-xs text-brand-muted">
-                  These are ONLY estimates. Please see the information below for more details. *
-                </p>
-
-                <div className="mt-4 space-y-3">
-                  {result.years.map((val, i) => (
-                    <div key={i}>
-                      <label className="mb-1 block text-xs font-semibold text-brand-muted">
-                        Total Estimated Tax Credit Year {i + 1}
-                      </label>
-                      <div className={readonlyClass}>{fmt(val)}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+        {/* Back button */}
+        <div className="mt-8">
+          <button
+            onClick={() => navigate('/pricing/401k')}
+            className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark transition hover:border-brand-gold"
+          >
+            ← Back to 401(k) Pricing
+          </button>
         </div>
       </div>
     </div>

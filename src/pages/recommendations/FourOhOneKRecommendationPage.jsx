@@ -22,7 +22,13 @@ function FourOhOneKRecommendationPage() {
 
         <p className="mt-6 text-sm font-bold text-brand-dark">Continue with 401(k) Plan</p>
 
-        <div className="mt-4">
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <button
+            onClick={() => navigate('/beehive-pathway')}
+            className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark transition hover:border-brand-gold"
+          >
+            ← Back
+          </button>
           <Button className="px-10 py-3" onClick={() => navigate('/pricing/401k')}>
             Continue →
           </Button>

@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom'
 import Logo from '../../components/common/Logo'
 
 function IraFeeDetailsPage() {
+  const navigate = useNavigate()
+
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-dark px-6 py-16">
       <Logo className="mb-10 flex justify-center" imageClassName="max-w-[220px]" />
@@ -60,6 +63,15 @@ function IraFeeDetailsPage() {
             <strong>$179.50 – $262.00/year.</strong>
           </li>
         </ul>
+
+        <div className="mt-8">
+          <button
+            onClick={() => navigate('/pricing/ira')}
+            className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark transition hover:border-brand-gold"
+          >
+            ← Back to IRA Pricing
+          </button>
+        </div>
       </div>
     </div>
   )

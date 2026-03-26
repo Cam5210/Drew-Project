@@ -4,34 +4,80 @@ import Logo from '../../components/common/Logo'
 import Button from '../../components/common/Button'
 import { getRecommendedPlan } from '../../utils/decisionEngine'
 
+const STEPS = [
+  {
+    key: 'employeeCount',
+    question:
+      'How many employees are part of your organization? This will help us determine the right path for you.',
+    type: 'select',
+    label: 'Select Number of Employees',
+    options: [1, 5, 10, 15, 20, 25, 28, 30, 50, 75, 100, 150, 200, 500],
+  },
+  {
+    key: 'wantsRetirementPlan',
+    question:
+      'Do you want to maximize retirement savings for you and your employees by offering a retirement plan?',
+    type: 'radio',
+    name: 'retirement',
+  },
+  {
+    key: 'wantsDiscretionary',
+    question:
+      'Would you like the ability to reward your employees by making a discretionary contribution to their savings plan?',
+    type: 'radio',
+    name: 'discretionary',
+  },
+  {
+    key: 'hasHighlyCompensated',
+    question:
+      'Are you or any of your employees classified as highly compensated employees under DOL guidelines, making over $150,000 per year?',
+    type: 'radio',
+    name: 'hce',
+  },
+]
+
 function BeehivePathwayPage() {
   const navigate = useNavigate()
-  const [employeeCount, setEmployeeCount] = useState('')
-  const [wantsRetirementPlan, setWantsRetirementPlan] = useState('')
-  const [wantsDiscretionary, setWantsDiscretionary] = useState('')
-  const [hasHighlyCompensated, setHasHighlyCompensated] = useState('')
+  const [step, setStep] = useState(0)
+  const [answers, setAnswers] = useState({
+    employeeCount: '',
+    wantsRetirementPlan: '',
+    wantsDiscretionary: '',
+    hasHighlyCompensated: '',
+  })
+
+  const current = STEPS[step]
+  const value = answers[current.key]
+  const canContinue = value !== ''
+  const isLast = step === STEPS.length - 1
 
   const radioClass =
     'flex cursor-pointer items-center gap-3 rounded-lg border border-brand-border px-4 py-3 text-sm transition hover:border-brand-gold'
 
-  const handleContinue = (setter, value) => {
-    setter(value)
+  const setAnswer = (val) => {
+    setAnswers((prev) => ({ ...prev, [current.key]: val }))
   }
 
-  const allAnswered =
-    employeeCount !== '' &&
-    wantsRetirementPlan !== '' &&
-    wantsDiscretionary !== '' &&
-    hasHighlyCompensated !== ''
+  const handleNext = () => {
+    if (isLast) {
+      const plan = getRecommendedPlan({
+        employeeCount: Number(answers.employeeCount),
+        wantsRetirementPlan: answers.wantsRetirementPlan,
+        wantsDiscretionary: answers.wantsDiscretionary,
+        hasHighlyCompensated: answers.hasHighlyCompensated,
+      })
+      navigate(`/recommendation/${plan}`)
+    } else {
+      setStep((s) => s + 1)
+    }
+  }
 
-  const handleSubmit = () => {
-    const plan = getRecommendedPlan({
-      employeeCount: Number(employeeCount),
-      wantsRetirementPlan,
-      wantsDiscretionary,
-      hasHighlyCompensated,
-    })
-    navigate(`/recommendation/${plan}`)
+  const handleBack = () => {
+    if (step === 0) {
+      navigate('/register')
+    } else {
+      setStep((s) => s - 1)
+    }
   }
 
   return (
@@ -49,161 +95,106 @@ function BeehivePathwayPage() {
           </p>
         </div>
 
-        {/* 4 Question Cards */}
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {/* Q1 — Employee count */}
-          <div className="surface-card flex flex-col p-6">
-            <p className="m-0 mb-4 text-center text-sm font-semibold leading-snug text-brand-dark">
-              How many employees are part of your organization? This will help us determine the
-              right path for you.
-            </p>
-            <label className="mb-2 text-xs font-semibold text-brand-muted">
-              Select Number of Employees
-            </label>
-            <select
-              className="rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-dark focus:border-brand-gold focus:outline-none"
-              value={employeeCount}
-              onChange={(e) => setEmployeeCount(e.target.value)}
-            >
-              <option value="">—</option>
-              {[1, 5, 10, 15, 20, 25, 28, 30, 50, 75, 100, 150, 200, 500].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-            <div className="mt-auto pt-4">
-              <Button
-                className="w-full gap-1"
-                disabled={!employeeCount}
-                onClick={() => {}}
+        {/* Progress bar */}
+        <div className="mb-8 flex items-center justify-center gap-2">
+          {STEPS.map((_, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition ${
+                  i < step
+                    ? 'bg-brand-gold text-white'
+                    : i === step
+                      ? 'border-2 border-brand-gold bg-white text-brand-gold'
+                      : 'border border-brand-border bg-white text-brand-muted'
+                }`}
               >
-                Continue →
-              </Button>
-            </div>
-          </div>
-
-          {/* Q2 — Retirement plan */}
-          <div className="surface-card flex flex-col p-6">
-            <p className="m-0 mb-4 text-center text-sm font-semibold leading-snug text-brand-dark">
-              Do you want to maximize retirement savings for you and your employees by offering a
-              retirement plan?
-            </p>
-            <div className="space-y-3">
-              <label className={`${radioClass} ${wantsRetirementPlan === 'yes' ? 'border-brand-gold bg-brand-gold/5' : ''}`}>
-                <input
-                  type="radio"
-                  name="retirement"
-                  className="accent-brand-gold"
-                  checked={wantsRetirementPlan === 'yes'}
-                  onChange={() => handleContinue(setWantsRetirementPlan, 'yes')}
+                {i < step ? '✓' : i + 1}
+              </div>
+              {i < STEPS.length - 1 && (
+                <div
+                  className={`h-0.5 w-8 rounded transition ${
+                    i < step ? 'bg-brand-gold' : 'bg-brand-border'
+                  }`}
                 />
-                Yes
-              </label>
-              <label className={`${radioClass} ${wantsRetirementPlan === 'no' ? 'border-brand-gold bg-brand-gold/5' : ''}`}>
-                <input
-                  type="radio"
-                  name="retirement"
-                  className="accent-brand-gold"
-                  checked={wantsRetirementPlan === 'no'}
-                  onChange={() => handleContinue(setWantsRetirementPlan, 'no')}
-                />
-                No
-              </label>
+              )}
             </div>
-            <div className="mt-auto pt-4">
-              <Button className="w-full gap-1" disabled={!wantsRetirementPlan} onClick={() => {}}>
-                Continue →
-              </Button>
-            </div>
-          </div>
-
-          {/* Q3 — Discretionary contribution */}
-          <div className="surface-card flex flex-col p-6">
-            <p className="m-0 mb-4 text-center text-sm font-semibold leading-snug text-brand-dark">
-              Would you like the ability to reward your employees by making a discretionary
-              contribution to their savings plan?
-            </p>
-            <div className="space-y-3">
-              <label className={`${radioClass} ${wantsDiscretionary === 'yes' ? 'border-brand-gold bg-brand-gold/5' : ''}`}>
-                <input
-                  type="radio"
-                  name="discretionary"
-                  className="accent-brand-gold"
-                  checked={wantsDiscretionary === 'yes'}
-                  onChange={() => handleContinue(setWantsDiscretionary, 'yes')}
-                />
-                Yes
-              </label>
-              <label className={`${radioClass} ${wantsDiscretionary === 'no' ? 'border-brand-gold bg-brand-gold/5' : ''}`}>
-                <input
-                  type="radio"
-                  name="discretionary"
-                  className="accent-brand-gold"
-                  checked={wantsDiscretionary === 'no'}
-                  onChange={() => handleContinue(setWantsDiscretionary, 'no')}
-                />
-                No
-              </label>
-            </div>
-            <div className="mt-auto pt-4">
-              <Button className="w-full gap-1" disabled={!wantsDiscretionary} onClick={() => {}}>
-                Continue →
-              </Button>
-            </div>
-          </div>
-
-          {/* Q4 — Highly compensated */}
-          <div className="surface-card flex flex-col p-6">
-            <p className="m-0 mb-4 text-center text-sm font-semibold leading-snug text-brand-dark">
-              Are you or any of your employees classified as highly compensated employees under DOL
-              guidelines, making over $150,000 per year?
-            </p>
-            <div className="space-y-3">
-              <label className={`${radioClass} ${hasHighlyCompensated === 'yes' ? 'border-brand-gold bg-brand-gold/5' : ''}`}>
-                <input
-                  type="radio"
-                  name="hce"
-                  className="accent-brand-gold"
-                  checked={hasHighlyCompensated === 'yes'}
-                  onChange={() => handleContinue(setHasHighlyCompensated, 'yes')}
-                />
-                Yes
-              </label>
-              <label className={`${radioClass} ${hasHighlyCompensated === 'no' ? 'border-brand-gold bg-brand-gold/5' : ''}`}>
-                <input
-                  type="radio"
-                  name="hce"
-                  className="accent-brand-gold"
-                  checked={hasHighlyCompensated === 'no'}
-                  onChange={() => handleContinue(setHasHighlyCompensated, 'no')}
-                />
-                No
-              </label>
-            </div>
-            <div className="mt-auto pt-4">
-              <Button className="w-full gap-1" disabled={!hasHighlyCompensated} onClick={() => {}}>
-                Continue →
-              </Button>
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Bottom navigation + Submit */}
-        <div className="mt-8 flex items-center justify-between">
-          <span className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark">
-            ← IRA
-          </span>
+        <p className="mb-6 text-center text-xs font-semibold text-brand-muted">
+          Question {step + 1} of {STEPS.length}
+        </p>
 
-          {allAnswered && (
-            <Button className="px-10 py-3 text-base" onClick={handleSubmit}>
-              See Your Recommendation →
-            </Button>
-          )}
+        {/* Question card */}
+        <div className="mx-auto max-w-md">
+          <div className="surface-card flex flex-col p-8">
+            <p className="m-0 mb-6 text-center text-base font-semibold leading-snug text-brand-dark">
+              {current.question}
+            </p>
 
-          <span className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark">
-            401(k) →
-          </span>
+            {current.type === 'select' && (
+              <div>
+                <label className="mb-2 text-xs font-semibold text-brand-muted">
+                  {current.label}
+                </label>
+                <select
+                  className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-dark focus:border-brand-gold focus:outline-none"
+                  value={value}
+                  onChange={(e) => setAnswer(e.target.value)}
+                >
+                  <option value="">—</option>
+                  {current.options.map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {current.type === 'radio' && (
+              <div className="space-y-3">
+                <label
+                  className={`${radioClass} ${value === 'yes' ? 'border-brand-gold bg-brand-gold/5' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name={current.name}
+                    className="accent-brand-gold"
+                    checked={value === 'yes'}
+                    onChange={() => setAnswer('yes')}
+                  />
+                  Yes
+                </label>
+                <label
+                  className={`${radioClass} ${value === 'no' ? 'border-brand-gold bg-brand-gold/5' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name={current.name}
+                    className="accent-brand-gold"
+                    checked={value === 'no'}
+                    onChange={() => setAnswer('no')}
+                  />
+                  No
+                </label>
+              </div>
+            )}
+
+            {/* Navigation buttons */}
+            <div className="mt-8 flex items-center justify-between">
+              <button
+                onClick={handleBack}
+                className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark transition hover:border-brand-gold"
+              >
+                ← Back
+              </button>
+
+              <Button className="px-8 py-2.5" disabled={!canContinue} onClick={handleNext}>
+                {isLast ? 'See Your Recommendation →' : 'Next →'}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

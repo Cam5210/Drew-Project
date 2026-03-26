@@ -55,7 +55,13 @@ function IraProviderPage() {
         </div>
 
         {/* Bottom nav */}
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-between">
+          <button
+            onClick={() => navigate('/pricing/ira')}
+            className="text-sm font-semibold text-white/70 transition hover:text-brand-gold"
+          >
+            ← Back
+          </button>
           <button
             onClick={() => navigate('/recommendation/401k')}
             className="text-sm font-semibold text-white/70 transition hover:text-brand-gold"

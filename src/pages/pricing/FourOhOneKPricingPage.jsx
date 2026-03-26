@@ -32,7 +32,7 @@ function FourOhOneKPricingPage() {
             onClick={() => navigate('/pricing/tax-credit')}
             className="rounded-lg border border-brand-border px-4 py-2 text-xs font-semibold text-brand-dark transition hover:border-brand-gold"
           >
-            Calculate tax credit
+            View tax credits
           </button>
         </div>
 
@@ -40,7 +40,13 @@ function FourOhOneKPricingPage() {
           Ready to start your 401(k) journey?
         </p>
 
-        <div className="mt-4">
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <button
+            onClick={() => navigate('/recommendation/401k')}
+            className="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold text-brand-dark transition hover:border-brand-gold"
+          >
+            ← Back
+          </button>
           <Button className="px-10 py-3" onClick={() => navigate('/providers/401k')}>
             Let&apos;s Go
           </Button>
