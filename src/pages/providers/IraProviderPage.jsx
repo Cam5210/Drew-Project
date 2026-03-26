@@ -10,15 +10,13 @@ function IraProviderPage() {
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-dark px-6 py-16">
-      <Logo className="mb-10 flex justify-center" imageClassName="max-w-[220px]" />
-
       <div className="mx-auto max-w-lg text-center">
-        <h2 className="m-0 text-2xl font-semibold text-white">
-          Welcome to Utah&apos;s Auto-IRA
-        </h2>
-
         {/* THE HIVE branding card */}
         <div className="surface-card mt-8 px-8 py-10 md:px-12">
+          <Logo className="mb-6 flex justify-center" imageClassName="max-w-[220px]" />
+          <h2 className="m-0 mb-6 text-2xl font-semibold text-brand-dark">
+            Welcome to Utah&apos;s Auto-IRA
+          </h2>
           <div className="mx-auto flex h-24 w-48 items-center justify-center rounded-2xl border border-brand-border bg-white px-4 py-3">
             <img src={vestwellLogo} alt="Vestwell logo" className="max-h-12 w-auto object-contain" />
           </div>

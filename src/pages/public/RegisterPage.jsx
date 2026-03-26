@@ -27,9 +27,8 @@ function RegisterPage() {
   return (
     <section className="flex min-h-[calc(100vh-140px)] items-center justify-center px-6 py-12">
       <div className="w-full max-w-lg">
-        <Logo className="mb-8 flex justify-center" imageClassName="max-w-[220px]" />
-
         <div className="surface-card px-8 py-10 md:px-10">
+          <Logo className="mb-6 flex justify-center" imageClassName="max-w-[220px]" />
           <div className="mb-8 text-center">
             <h1 className="m-0 text-2xl font-semibold text-brand-dark">
               Let&apos;s get to know you.

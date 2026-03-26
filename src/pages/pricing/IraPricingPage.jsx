@@ -7,9 +7,8 @@ function IraPricingPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center bg-brand-light px-6 py-16">
-      <Logo className="mb-10 flex justify-center" imageClassName="max-w-[220px]" />
-
       <div className="surface-card w-full max-w-lg px-8 py-10 text-center md:px-12">
+        <Logo className="mb-6 flex justify-center" imageClassName="max-w-[220px]" />
         <h2 className="m-0 text-2xl font-semibold text-brand-dark">Set up your plan today</h2>
 
         {/* Employer Cost */}

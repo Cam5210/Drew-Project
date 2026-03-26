@@ -83,10 +83,9 @@ function BeehivePathwayPage() {
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-light">
       <div className="mx-auto max-w-content px-6 py-10 md:px-10">
-        <Logo className="mb-8 flex justify-center" imageClassName="max-w-[220px]" />
-
         {/* Explanation banner */}
         <div className="mb-10 rounded-2xl border border-brand-border bg-white px-6 py-6 text-center shadow-sm">
+          <Logo className="mb-4 flex justify-center" imageClassName="max-w-[220px]" />
           <p className="m-0 text-lg leading-relaxed text-brand-dark md:text-xl">
             Employers start with{' '}
             <em className="font-semibold text-brand-dark">the Beehive Pathway</em>: a simple

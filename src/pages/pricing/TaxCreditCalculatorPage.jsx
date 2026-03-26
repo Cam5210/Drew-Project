@@ -25,9 +25,8 @@ function TaxCreditCalculatorPage() {
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-dark px-6 py-16">
-      <Logo className="mb-10 flex justify-center" imageClassName="max-w-[220px]" />
-
       <div className="surface-card mx-auto max-w-3xl px-8 py-10 md:px-12">
+        <Logo className="mb-6 flex justify-center" imageClassName="max-w-[220px]" />
         <h2 className="m-0 text-xl font-bold text-brand-dark">Available Tax Credits</h2>
         <p className="mt-2 text-sm leading-relaxed text-brand-muted">
           Small businesses may be eligible for significant federal tax credits when starting a new
