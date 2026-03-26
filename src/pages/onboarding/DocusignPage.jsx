@@ -36,7 +36,9 @@ function DocusignPage() {
         >
           ← Back
         </button>
-        <Logo className="flex justify-center" imageClassName="max-w-[160px]" />
+        <div className="rounded-lg bg-white px-4 py-2">
+          <Logo className="flex justify-center" imageClassName="max-w-[140px]" />
+        </div>
         <div className="w-16" />
       </div>
 

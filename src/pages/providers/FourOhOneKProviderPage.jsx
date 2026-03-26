@@ -28,16 +28,14 @@ function FourOhOneKProviderPage() {
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-brand-dark px-6 py-16">
-      <Logo className="mb-10 flex justify-center" imageClassName="max-w-[220px]" />
-
       <div className="mx-auto max-w-4xl">
-        <h2 className="m-0 text-center text-2xl font-semibold text-white">
-          Your 401(k) Provider Match
-        </h2>
-
-        <div className="mt-8 grid gap-6 md:grid-cols-[1.4fr_0.6fr]">
+        <div className={`mt-8 grid gap-6 ${showAlternatives ? 'md:grid-cols-[1.4fr_0.6fr]' : 'md:grid-cols-1 md:max-w-2xl md:mx-auto'}`}>
           {/* Primary match */}
           <div className="surface-card flex flex-col items-center px-10 py-10 text-center">
+            <Logo className="mb-6 flex justify-center" imageClassName="max-w-[220px]" />
+            <h2 className="m-0 mb-6 text-2xl font-semibold text-brand-dark">
+              Your 401(k) Provider Match
+            </h2>
             <p className="m-0 text-xs font-semibold uppercase tracking-widest text-brand-muted">
               {showAlternatives ? 'Your selected provider:' : "We've matched you with the following provider:"}
             </p>
@@ -70,8 +68,8 @@ function FourOhOneKProviderPage() {
             </div>
           </div>
 
-          {/* Alternatives sidebar */}
-          <div className={`surface-card px-6 py-8 transition-opacity ${showAlternatives ? 'opacity-100' : 'opacity-60'}`}>
+          {/* Alternatives sidebar — hidden until user clicks */}
+          {showAlternatives && <div className="surface-card px-6 py-8">
             <p className="m-0 text-xs font-semibold uppercase tracking-widest text-brand-muted">
               {showAlternatives ? 'Select a provider' : 'Other providers we partner with'}
             </p>
@@ -99,7 +97,7 @@ function FourOhOneKProviderPage() {
                 </button>
               ))}
             </div>
-          </div>
+          </div>}
         </div>
 
         {/* Back button */}
